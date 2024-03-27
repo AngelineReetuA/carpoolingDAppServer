@@ -1,4 +1,5 @@
 "use strict";
+import path from "path";
 import { createServer } from "http";
 import express from "express";
 const app = express();
@@ -14,7 +15,6 @@ import {
   RetrieveUserDetails,
   createRide,
   updateRide,
-  RetrieveRide,
 } from "./application-javascript/app.js";
 
 // support parsing of application/json type post data
@@ -113,7 +113,7 @@ app.post("/get-user-details-and-post", async (req, res) => {
     console.log(result);
     obj.name = result.name;
     obj.phoneNo = result.phoneNo;
-    obj.rideUnames = [];
+    obj.rideUnames = "";
     obj.rideStatus = "notDone";
     console.log("OBJ AFTER", obj);
     await createRide(contract2, { obj });
@@ -130,13 +130,11 @@ app.post("/update-ride-details", async (req, res) => {
   console.log(rideID, metamask);
   try {
     let result = await contract2.submitTransaction("RetrieveRide", rideID);
-    console.log("RESULT BEFORE", result)
     result = JSON.parse(result.toString());
-    console.log("RESULTT", result)
-    console.log(result.RidersUnames);
+    console.log("RESULTT", result);
     //add metamask to riderUnames
-    let riderUnames = [result.RidersUnames];
-    riderUnames.push(metamask);
+    let riderUnames = result.RidersUnames;
+    riderUnames = riderUnames + ";" + metamask;
 
     // reduce carpooler number
     let carpool = parseInt(result.Carpoolers);
@@ -158,11 +156,12 @@ app.post("/update-ride-details", async (req, res) => {
     };
 
     console.log("UPDATED RIDE", updatedRide);
-    const respp = await updateRide(contract2, { obj:updatedRide });
-    if (respp === true){
-    res.status(200).json({ message: "Ride updated successfully" });
+    console.log("RIDERS UNAMES", riderUnames);
+    const respp = await updateRide(contract2, { obj: updatedRide });
+    if (respp === true) {
+      res.status(200).json({ message: "Ride updated successfully" });
     } else {
-      res.status(400).json({message:"Error"})
+      res.status(400).json({ message: "Error" });
     }
   } catch (error) {
     console.log("ERROR IN UPDATING", error);
@@ -170,15 +169,12 @@ app.post("/update-ride-details", async (req, res) => {
   }
 });
 
-app.use("/getfile", async (req, res) => {
-  console.log(req.body);
-  const result = await getIpfsFile(req.body.cid);
-  console.log("RESULT FROM /GETFILE: ", result);
-  res.status(200).send(result);
+app.get("/get-contract", function (req, res) {
+  res.header("Content-Type", "application/json");
+  res.sendFile(path.resolve("./tagjsonABI.json"));
 });
 
 app.get("/get-rides", async (req, res) => {
-  console.log("hi I am called");
   try {
     const rides = await getAllRides(contract2);
     console.log("RIDES", rides);

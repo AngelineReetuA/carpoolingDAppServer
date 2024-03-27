@@ -185,6 +185,9 @@ export async function createRide(contract2, { obj }) {
     const carpoolers = obj.tagg;
     const rideUnames = obj.rideUnames;
     const rideStatus = obj.rideStatus;
+    console.log("----------------------------")
+    console.log("ride unames from gateway", rideUnames)
+    console.log("----------------------------")
     let tx = contract2.createTransaction("CreateRide");
     tx.setEndorsingPeers(["peer0.org1.example.com", "peer0.org2.example.com"]);
     await contract2.submitTransaction(

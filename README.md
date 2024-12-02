@@ -17,10 +17,9 @@ For this project -->
     3. Clone this repository to your local system and deploy the folder chaincode-javascript as the network’s channel’s chaincode.
 <br/>
 <b>Process 2:</b><br/>
-1. Start the server<br/>
-    1. Navigate to this repository and run the following commands to start the simple express server.
-         <code>npm install</code>
-         <code>npm run dev</code>
+1. Start the server: Navigate to this repository and run the following commands to start the simple express server.<br/>
+         <code>npm install</code><br/>
+         <code>npm run dev</code><br/>
 
 <br/><br/>
 <b>Working of the App:</b><br/>
